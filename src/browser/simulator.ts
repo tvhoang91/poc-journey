@@ -1,4 +1,5 @@
-import { JourneySpec, UXMetrics } from '../types'
+import { JourneySpec, UXMetrics, AgentContext } from '../types'
+import { AgentCoordinator } from './agents'
 
 export class BrowserSimulator {
   private metrics: UXMetrics = {
@@ -9,6 +10,14 @@ export class BrowserSimulator {
     timestamp: new Date(),
   }
 
+  // Multi-agent system components
+  private coordinator: AgentCoordinator
+  private context: AgentContext | undefined
+
+  constructor(config?: any) {
+    this.coordinator = new AgentCoordinator(config)
+  }
+
   async simulateJourney(journey: JourneySpec): Promise<UXMetrics> {
     console.log(`Starting journey simulation: ${journey.name}`)
 
@@ -16,9 +25,19 @@ export class BrowserSimulator {
     const startTime = Date.now()
 
     try {
-      // for (const step of journey.steps) {
-      //   await this.executeStep(step)
-      // }
+      // ============================================================================
+      // MULTI-AGENT WORKFLOW
+      // ============================================================================
+
+      // Initialize the multi-agent system
+      await this.initializeAgentSystem(journey)
+
+      // Execute user intents through agent coordination
+      const userIntents = this.extractUserIntents(journey)
+
+      for (const intent of userIntents) {
+        await this.executeUserIntent(intent)
+      }
     } catch (error) {
       console.error('Journey simulation failed:', error)
       this.metrics.errorCount++
@@ -28,55 +47,69 @@ export class BrowserSimulator {
     return this.metrics
   }
 
-  // private async executeStep(step: JourneyStep): Promise<void> {
-  //   const stepStart = Date.now()
+  private async initializeAgentSystem(journey: JourneySpec): Promise<void> {
+    this.context = {
+      journeySpec: journey,
+      currentStep: 0,
+      pageState: {
+        url: journey.baseUrl || '',
+        title: '',
+        loadState: 'loading',
+        viewport: { width: 1920, height: 1080 },
+        errors: [],
+      },
+      userIntent: '',
+      errorHistory: [],
+      screenshots: [],
+    }
 
-  //   console.log(`Executing step: ${step.action}`)
+    console.log('🤖 Initializing multi-agent system...')
 
-  //   switch (step.action) {
-  //     case 'navigate':
-  //       await this.navigate(step.url!)
-  //       break
-  //     case 'click':
-  //       await this.click(step.selector!)
-  //       break
-  //     case 'type':
-  //       await this.type(step.text!, step.selector!)
-  //       break
-  //     case 'wait':
-  //       await this.wait(step.timeout || 1000)
-  //       break
-  //     case 'screenshot':
-  //       await this.screenshot()
-  //       break
-  //   }
-
-  //   this.metrics.interactionTime += Date.now() - stepStart
-  // }
-
-  private async navigate(url: string): Promise<void> {
-    console.log(`Navigating to: ${url}`)
-    await this.wait(1000)
+    const isReady = await this.coordinator.isReady()
+    if (!isReady) {
+      throw new Error('Agent coordinator failed to initialize')
+    }
   }
 
-  private async click(selector: string): Promise<void> {
-    console.log(`Clicking: ${selector}`)
-    await this.wait(500)
+  private extractUserIntents(journey: JourneySpec): string[] {
+    // Extract high-level user intents from journey specification
+    // This allows the strategy planner to work with semantic goals
+    // rather than low-level steps
+
+    return [
+      `Navigate to ${journey.baseUrl}`,
+      'Complete user authentication',
+      'Perform primary user tasks',
+      'Verify successful completion',
+    ]
   }
 
-  private async type(text: string, selector: string): Promise<void> {
-    console.log(`Typing "${text}" in: ${selector}`)
-    await this.wait(text.length * 50)
+  private async executeUserIntent(intent: string): Promise<void> {
+    console.log(`🎯 Executing user intent: ${intent}`)
+
+    if (!this.context) {
+      throw new Error('Agent context not initialized')
+    }
+
+    // Use the coordinator to manage the multi-agent workflow
+    const results = await this.coordinator.executeUserIntent(intent, this.context)
+
+    // Update metrics based on execution results
+    if (results.data?.executionResults) {
+      const execResults = results.data.executionResults
+      if (execResults.metrics) {
+        this.metrics.interactionTime += execResults.metrics.totalInteractionTime || 0
+        this.metrics.errorCount += execResults.metrics.errorCount || 0
+      }
+      if (execResults.screenshots) {
+        this.metrics.screenshotPaths.push(...execResults.screenshots)
+      }
+    }
+
+    console.log(`✅ Completed intent: ${intent}`)
   }
 
   private async wait(timeout: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, timeout))
-  }
-
-  private async screenshot(): Promise<void> {
-    const screenshotPath = `data/screenshots/screenshot_${Date.now()}.png`
-    console.log(`Taking screenshot: ${screenshotPath}`)
-    this.metrics.screenshotPaths.push(screenshotPath)
-    await this.wait(200)
   }
 }

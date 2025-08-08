@@ -1,40 +1,21 @@
 import { BrowserSimulator } from './browser/simulator'
-import { JourneySpec } from './types'
+import { JourneyParser } from './journey/parser'
 
 async function testSimulator() {
   console.log('🎭 Testing Browser Simulator')
 
   try {
     const simulator = new BrowserSimulator()
-
-    // Create a test journey
-    const testJourney: JourneySpec = {
-      name: 'Test Login Flow',
-      description: 'Simple test for browser simulation',
-      baseUrl: 'https://example.com',
-      credentials: {
-        username: 'test@example.com',
-        password: 'testpass123',
-      },
-      userSimulation: {
-        userProfile: {
-          role: 'User',
-          experienceLevel: 'Beginner',
-          newTo: ['JavaScript', 'React'],
-        },
-        goals: ['Complete the login flow', 'Navigate to dashboard'],
-        context: ['Using a Windows PC', 'Using Chrome browser'],
-      },
-      successCriteria: ['Login successfully', 'Navigate to dashboard successfully'],
-    }
+    const parser = new JourneyParser()
 
     console.log('🚀 Starting simulation with test journey:')
-    console.log(JSON.stringify(testJourney, null, 2))
+    const sampleJourney = await parser.parseJourneyFile('data/journeys/sample-journey.md')
+    console.log(JSON.stringify(sampleJourney, null, 2))
 
     console.log('\n⏳ Running simulation...')
     const startTime = Date.now()
 
-    const metrics = await simulator.simulateJourney(testJourney)
+    const metrics = await simulator.simulateJourney(sampleJourney)
 
     const endTime = Date.now()
     console.log(`\n✅ Simulation completed in ${endTime - startTime}ms`)
