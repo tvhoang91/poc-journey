@@ -6,7 +6,7 @@ async function testSimulator() {
 
   try {
     const simulator = new BrowserSimulator()
-    
+
     // Create a test journey
     const testJourney: JourneySpec = {
       name: 'Test Login Flow',
@@ -16,40 +16,16 @@ async function testSimulator() {
         username: 'test@example.com',
         password: 'testpass123',
       },
-      steps: [
-        {
-          action: 'navigate',
-          url: 'https://example.com/login',
+      userSimulation: {
+        userProfile: {
+          role: 'User',
+          experienceLevel: 'Beginner',
+          newTo: ['JavaScript', 'React'],
         },
-        {
-          action: 'type',
-          text: 'test@example.com',
-          selector: '#email',
-        },
-        {
-          action: 'type',
-          text: 'testpass123',
-          selector: '#password',
-        },
-        {
-          action: 'click',
-          selector: '#login-button',
-        },
-        {
-          action: 'wait',
-          timeout: 2000,
-        },
-        {
-          action: 'screenshot',
-        },
-        {
-          action: 'navigate',
-          url: 'https://example.com/dashboard',
-        },
-        {
-          action: 'screenshot',
-        },
-      ],
+        goals: ['Complete the login flow', 'Navigate to dashboard'],
+        context: ['Using a Windows PC', 'Using Chrome browser'],
+      },
+      successCriteria: ['Login successfully', 'Navigate to dashboard successfully'],
     }
 
     console.log('🚀 Starting simulation with test journey:')
@@ -57,9 +33,9 @@ async function testSimulator() {
 
     console.log('\n⏳ Running simulation...')
     const startTime = Date.now()
-    
+
     const metrics = await simulator.simulateJourney(testJourney)
-    
+
     const endTime = Date.now()
     console.log(`\n✅ Simulation completed in ${endTime - startTime}ms`)
 
@@ -79,7 +55,6 @@ async function testSimulator() {
         console.log(`${index + 1}. ${path}`)
       })
     }
-
   } catch (error) {
     console.error('❌ Simulator test failed:', error)
     if (error instanceof Error) {

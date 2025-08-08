@@ -3,7 +3,6 @@ node_modules/
 
 # Build output
 dist/
-data/
 
 # Environment variables
 .env
@@ -53,6 +52,5 @@ ehthumbs.db
 Thumbs.db
 
 # Screenshots and reports (generated data)
-data/screenshots/*.png
-data/screenshots/*.jpg
-data/reports/*.json
+data/screenshots/
+data/reports/

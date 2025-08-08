@@ -1,4 +1,4 @@
-import { JourneySpec, JourneyStep, UXMetrics } from '../types'
+import { JourneySpec, UXMetrics } from '../types'
 
 export class BrowserSimulator {
   private metrics: UXMetrics = {
@@ -11,14 +11,14 @@ export class BrowserSimulator {
 
   async simulateJourney(journey: JourneySpec): Promise<UXMetrics> {
     console.log(`Starting journey simulation: ${journey.name}`)
-    
+
     this.metrics.timestamp = new Date()
     const startTime = Date.now()
 
     try {
-      for (const step of journey.steps) {
-        await this.executeStep(step)
-      }
+      // for (const step of journey.steps) {
+      //   await this.executeStep(step)
+      // }
     } catch (error) {
       console.error('Journey simulation failed:', error)
       this.metrics.errorCount++
@@ -28,31 +28,31 @@ export class BrowserSimulator {
     return this.metrics
   }
 
-  private async executeStep(step: JourneyStep): Promise<void> {
-    const stepStart = Date.now()
-    
-    console.log(`Executing step: ${step.action}`)
-    
-    switch (step.action) {
-      case 'navigate':
-        await this.navigate(step.url!)
-        break
-      case 'click':
-        await this.click(step.selector!)
-        break
-      case 'type':
-        await this.type(step.text!, step.selector!)
-        break
-      case 'wait':
-        await this.wait(step.timeout || 1000)
-        break
-      case 'screenshot':
-        await this.screenshot()
-        break
-    }
+  // private async executeStep(step: JourneyStep): Promise<void> {
+  //   const stepStart = Date.now()
 
-    this.metrics.interactionTime += Date.now() - stepStart
-  }
+  //   console.log(`Executing step: ${step.action}`)
+
+  //   switch (step.action) {
+  //     case 'navigate':
+  //       await this.navigate(step.url!)
+  //       break
+  //     case 'click':
+  //       await this.click(step.selector!)
+  //       break
+  //     case 'type':
+  //       await this.type(step.text!, step.selector!)
+  //       break
+  //     case 'wait':
+  //       await this.wait(step.timeout || 1000)
+  //       break
+  //     case 'screenshot':
+  //       await this.screenshot()
+  //       break
+  //   }
+
+  //   this.metrics.interactionTime += Date.now() - stepStart
+  // }
 
   private async navigate(url: string): Promise<void> {
     console.log(`Navigating to: ${url}`)
@@ -70,7 +70,7 @@ export class BrowserSimulator {
   }
 
   private async wait(timeout: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, timeout))
+    return new Promise((resolve) => setTimeout(resolve, timeout))
   }
 
   private async screenshot(): Promise<void> {

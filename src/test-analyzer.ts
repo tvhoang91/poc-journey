@@ -6,7 +6,7 @@ async function testAnalyzer() {
 
   try {
     const analyzer = new UXAnalyzer()
-    
+
     // Create test metrics scenarios
     const testScenarios = [
       {
@@ -58,15 +58,15 @@ async function testAnalyzer() {
       console.log('Input metrics:', JSON.stringify(scenario.metrics, null, 2))
 
       const report = await analyzer.analyzeJourney(`Test Journey - ${scenario.name}`, scenario.metrics)
-      
+
       console.log(`\n✅ Analysis completed for "${scenario.name}"`)
       console.log(`Score: ${report.analysis.score}/100`)
-      
+
       console.log('Insights:')
       report.analysis.insights.forEach((insight, index) => {
         console.log(`  ${index + 1}. ${insight}`)
       })
-      
+
       console.log('Recommendations:')
       report.analysis.recommendations.forEach((rec, index) => {
         console.log(`  ${index + 1}. ${rec}`)
@@ -86,13 +86,13 @@ async function testAnalyzer() {
     }
 
     const fullReport = await analyzer.analyzeJourney('Sample Login Journey', sampleMetrics)
-    
+
     console.log('\n📋 Complete Report Structure:')
     console.log(JSON.stringify(fullReport, null, 2))
 
     // Test scoring edge cases
     console.log('\n🧪 Testing edge cases...')
-    
+
     const edgeCases = [
       { name: 'Perfect Performance', loadTime: 500, interactionTime: 200, errorCount: 0 },
       { name: 'Extremely Slow', loadTime: 15000, interactionTime: 5000, errorCount: 0 },
@@ -111,7 +111,6 @@ async function testAnalyzer() {
       const edgeReport = await analyzer.analyzeJourney(edgeCase.name, testMetrics)
       console.log(`${edgeCase.name}: Score ${edgeReport.analysis.score}/100`)
     }
-
   } catch (error) {
     console.error('❌ Analyzer test failed:', error)
     if (error instanceof Error) {
