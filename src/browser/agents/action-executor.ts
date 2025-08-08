@@ -1,6 +1,6 @@
 import { BaseAgent } from './base'
 import { AgentMessage, AgentResponse } from '../../types'
-import { ActionPlan, PlannedAction } from '../../types/actions-type'
+import { ActionPlan, PlannedAction } from '../../types/actions-schema'
 
 export class ActionExecutorAgent extends BaseAgent {
   name = 'ActionExecutor'

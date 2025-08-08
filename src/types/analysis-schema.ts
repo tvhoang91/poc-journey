@@ -1,9 +1,6 @@
 export interface UXMetrics {
-  loadTime: number
-  interactionTime: number
   errorCount: number
   screenshotPaths: string[]
-  timestamp: Date
 }
 
 export interface UXReport {

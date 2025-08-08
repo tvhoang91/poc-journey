@@ -1,7 +1,7 @@
 import { BaseAgent } from './base'
 import { AgentMessage, AgentResponse } from '../../types'
-import { ActionPlan } from '../../types/actions-type'
-import { DOMAnalysis } from '../../types/dom-type'
+import { ActionPlan } from '../../types/actions-schema'
+import { DOMAnalysis } from '../../types/dom-schema'
 
 export class StrategyPlannerAgent extends BaseAgent {
   name = 'StrategyPlanner'

@@ -1,6 +1,6 @@
 import { BaseAgent } from './base'
 import { AgentMessage, AgentResponse } from '../../types'
-import { DOMAnalysis } from '../../types/dom-type'
+import { DOMAnalysis } from '../../types/dom-schema'
 
 export class DOMAnalyzerAgent extends BaseAgent {
   name = 'DOMAnalyzer'

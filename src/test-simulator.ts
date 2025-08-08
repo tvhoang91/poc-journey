@@ -1,11 +1,10 @@
-import { BrowserSimulator } from './browser/simulator'
+import { AgentCoordinator } from './browser/coordinator'
 import { JourneyParser } from './journey/parser'
 
 async function testSimulator() {
   console.log('🎭 Testing Browser Simulator')
 
   try {
-    const simulator = new BrowserSimulator()
     const parser = new JourneyParser()
 
     console.log('🚀 Starting simulation with test journey:')
@@ -15,7 +14,9 @@ async function testSimulator() {
     console.log('\n⏳ Running simulation...')
     const startTime = Date.now()
 
-    const metrics = await simulator.simulateJourney(sampleJourney)
+    const coordinator = new AgentCoordinator(sampleJourney)
+    await coordinator.run()
+    const metrics = coordinator.metrics
 
     const endTime = Date.now()
     console.log(`\n✅ Simulation completed in ${endTime - startTime}ms`)
@@ -24,11 +25,8 @@ async function testSimulator() {
     console.log(JSON.stringify(metrics, null, 2))
 
     console.log('\n📈 Metrics Summary:')
-    console.log(`Load Time: ${metrics.loadTime}ms`)
-    console.log(`Interaction Time: ${metrics.interactionTime}ms`)
     console.log(`Error Count: ${metrics.errorCount}`)
     console.log(`Screenshots: ${metrics.screenshotPaths.length}`)
-    console.log(`Timestamp: ${metrics.timestamp.toISOString()}`)
 
     if (metrics.screenshotPaths.length > 0) {
       console.log('\n📷 Screenshot paths:')
