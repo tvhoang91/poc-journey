@@ -13,7 +13,7 @@ async function main() {
     const uxAnalyzer = new UXAnalyzer()
 
     const journeyFiles = await fs.readdir('data/journeys')
-    const markdownFiles = journeyFiles.filter(file => file.endsWith('.md'))
+    const markdownFiles = journeyFiles.filter((file) => file.endsWith('.md'))
 
     if (markdownFiles.length === 0) {
       console.log('No journey files found in data/journeys directory')
@@ -41,9 +41,9 @@ async function main() {
         console.log('\n📈 Analysis Summary:')
         console.log(`Score: ${report.analysis.score}/100`)
         console.log('Insights:')
-        report.analysis.insights.forEach(insight => console.log(`  • ${insight}`))
+        report.analysis.insights.forEach((insight) => console.log(`  • ${insight}`))
         console.log('Recommendations:')
-        report.analysis.recommendations.forEach(rec => console.log(`  • ${rec}`))
+        report.analysis.recommendations.forEach((rec) => console.log(`  • ${rec}`))
       } catch (error) {
         console.error(`❌ Error processing ${file}:`, error)
       }

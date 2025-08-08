@@ -16,10 +16,10 @@ export class JourneyParser {
     }
 
     let currentSection = ''
-    
+
     for (const line of lines) {
       const trimmed = line.trim()
-      
+
       if (trimmed.startsWith('# ')) {
         journeyData.name = trimmed.substring(2)
       } else if (trimmed.startsWith('## Description')) {
@@ -95,7 +95,7 @@ export class JourneyParser {
         action: 'screenshot',
       }
     }
-    
+
     return null
   }
 }

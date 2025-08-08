@@ -9,7 +9,13 @@
     "start": "node dist/index.js",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:parser": "ts-node src/test-parser.ts",
+    "test:simulator": "ts-node src/test-simulator.ts",
+    "test:analyzer": "ts-node src/test-analyzer.ts",
+    "debug:parser": "nodemon --exec ts-node src/test-parser.ts",
+    "debug:simulator": "nodemon --exec ts-node src/test-simulator.ts",
+    "debug:analyzer": "nodemon --exec ts-node src/test-analyzer.ts"
   },
   "keywords": [
     "ux",
@@ -20,5 +26,14 @@
   ],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@9.15.5+sha512.845196026aab1cc3f098a0474b64dfbab2afe7a1b4e91dd86895d8e4aa32a7a6d03049e2d0ad770bbe4de023a7122fb68c1a1d6e0d033c7076085f9d5d4800d4"
+  "packageManager": "pnpm@9.15.5+sha512.845196026aab1cc3f098a0474b64dfbab2afe7a1b4e91dd86895d8e4aa32a7a6d03049e2d0ad770bbe4de023a7122fb68c1a1d6e0d033c7076085f9d5d4800d4",
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "zod": "^4.0.15"
+  }
 }
