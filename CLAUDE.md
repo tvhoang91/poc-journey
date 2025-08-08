@@ -81,19 +81,6 @@ poc-journey/
 }
 ```
 
-#### package.json scripts
-```json
-{
-  "scripts": {
-    "build": "tsc",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-  }
-}
-```
-
 #### .prettierrc.json
 ```json
 {
@@ -103,13 +90,6 @@ poc-journey/
   "singleQuote": true,
   "trailingComma": "all"
 }
-```
-
-#### .prettierignore
-```
-node_modules/
-dist/
-*.md
 ```
 
 ### Development Commands
@@ -129,14 +109,6 @@ pnpm run build
 # Run built version
 pnpm start
 ```
-
-### Core Implementation Steps
-1. Create Zod schemas for journey specifications
-2. Build markdown parser for journey files
-3. Implement browser automation for user simulation
-4. Add screenshot and UX data collection
-5. Integrate Hugging Face for UX analysis
-6. Create report generation system
 
 ### Environment Variables
 Create `.env` file for:
