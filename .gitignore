@@ -54,3 +54,10 @@ Thumbs.db
 # Screenshots and reports (generated data)
 data/screenshots/
 data/reports/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/screenshots/
