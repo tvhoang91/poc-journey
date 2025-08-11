@@ -17,8 +17,8 @@ export class ActionPlannerAgent {
 
       if (execution.intent === 'Logged in to WordPress Admin') {
         return LOGGIN_PLAN
-      } else if (execution.intent === 'Navigate to Coupons page') {
-        return NAV_COUPONS_PLAN
+      } else if (execution.intent === 'Create a coupon') {
+        return COUPONS_PLAN
       }
 
       return execution
@@ -33,31 +33,48 @@ const LOGGIN_PLAN: IntentExecution = {
   actionPlan: {
     steps: [
       {
-        type: 'navigate',
-        target: 'https://wordpress.test/wp-admin/edit.php?post_type=shop_coupon',
+        action: 'navigate',
+        value: 'https://wordpress.test/wp-admin',
         actionReasoning: 'Navigating to WordPress Admin',
-        timeout: 5000,
-        waitAfter: 0,
+      },
+      {
+        action: 'fill',
+        targetLocator: {
+          getBy: 'label',
+          selector: 'username',
+        },
+        value: 'admin',
+        actionReasoning: 'Filling username',
+      },
+      {
+        action: 'fill',
+        targetLocator: {
+          getBy: 'label',
+          selector: 'password',
+        },
+        value: '1',
+        actionReasoning: 'Filling password',
+      },
+      {
+        action: 'click',
+        targetLocator: {
+          getBy: 'role',
+          selector: 'button',
+          name: 'Log In',
+        },
+        actionReasoning: 'Clicking login button',
       },
     ],
-    planReasoning: 'Navigating to WordPress Admin',
+    planReasoning: 'Navigating to WordPress Admin. Enter username and password and click login',
   },
   state: 'executing',
   currentStep: 0,
 }
 
-const NAV_COUPONS_PLAN: IntentExecution = {
-  intent: 'Navigate to Coupons page',
+const COUPONS_PLAN: IntentExecution = {
+  intent: 'Create a coupon',
   actionPlan: {
-    steps: [
-      {
-        type: 'navigate',
-        target: 'https://wordpress.test/wp-admin',
-        actionReasoning: 'Navigating to Coupons page',
-        timeout: 5000,
-        waitAfter: 0,
-      },
-    ],
+    steps: [],
     planReasoning: 'Navigating to Coupons page',
   },
   state: 'executing',

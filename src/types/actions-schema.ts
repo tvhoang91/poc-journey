@@ -8,7 +8,7 @@ export const locatorSchema = z.object({
 
 export const actionSchema = z.object({
   action: z.enum(['navigate', 'click', 'fill', 'check']),
-  targetLocator: locatorSchema,
+  targetLocator: locatorSchema.optional(),
   value: z.string().optional(),
   waitForLocator: locatorSchema.optional(),
   actionReasoning: z.string().min(10).max(500),

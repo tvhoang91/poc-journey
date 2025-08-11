@@ -43,22 +43,24 @@ export class ActionExecutorAgent {
   }
 
   async click(action: Action) {
-    const button = await this.locateElement(action.targetLocator)
+    const button = await this.locateElement(action.targetLocator!)
     await button?.click()
 
     if (action.waitForLocator) {
       const waitFor = await this.locateElement(action.waitForLocator)
       await waitFor?.waitFor({ timeout: 5000 })
+    } else {
+      await this.page?.waitForTimeout(2000)
     }
   }
 
   async fill(action: Action) {
-    const input = await this.locateElement(action.targetLocator)
+    const input = await this.locateElement(action.targetLocator!)
     await input?.fill(action.value!)
   }
 
   async check(action: Action) {
-    const checkbox = await this.locateElement(action.targetLocator)
+    const checkbox = await this.locateElement(action.targetLocator!)
     if (action.value === 'unchecked') {
       await checkbox?.uncheck()
     } else {

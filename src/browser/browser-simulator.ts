@@ -100,6 +100,8 @@ export async function simulateBrowser() {
 
     // Wait for the browser to be closed manually even on error
     await page.waitForEvent('close')
+  } finally {
+    await browser.close()
   }
 }
 
