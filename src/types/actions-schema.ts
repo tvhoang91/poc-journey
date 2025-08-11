@@ -1,14 +1,17 @@
 import z from 'zod'
 
+export const locatorSchema = z.object({
+  getBy: z.enum(['role', 'label', 'text']),
+  selector: z.string(),
+  name: z.string().optional(),
+})
+
 export const actionSchema = z.object({
-  type: z.enum(['navigate', 'click', 'type', 'wait', 'scroll', 'screenshot', 'hover', 'select']),
-  target: z.string().optional(),
+  action: z.enum(['navigate', 'click', 'fill', 'check']),
+  targetLocator: locatorSchema,
   value: z.string().optional(),
-  selector: z.string().optional(),
+  waitForLocator: locatorSchema.optional(),
   actionReasoning: z.string().min(10).max(500),
-  timeout: z.number().positive().max(30000).default(5000),
-  waitCondition: z.string().optional(),
-  waitAfter: z.number().min(0).max(10000).default(0),
 })
 
 export const actionPlanSchema = z.object({
@@ -18,3 +21,4 @@ export const actionPlanSchema = z.object({
 
 export type ActionPlan = z.infer<typeof actionPlanSchema>
 export type Action = z.infer<typeof actionSchema>
+export type Locator = z.infer<typeof locatorSchema>

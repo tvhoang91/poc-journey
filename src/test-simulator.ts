@@ -32,7 +32,7 @@ async function testSimulator() {
       console.log('\n📷 Screenshot paths:')
       metrics.screenshotPaths.forEach((path, index) => {
         console.log(`${index + 1}. ${path}`)
-      })s
+      })
     }
   } catch (error) {
     console.error('❌ Simulator test failed:', error)
