@@ -1,5 +1,5 @@
 import { DOMAnalyzerAgent } from './agents/dom-analyzer'
-import { StrategyPlannerAgent } from './agents/strategy-planner'
+import { ActionPlannerAgent } from './agents/action-planner'
 import { ActionExecutorAgent } from './agents/action-executor'
 import { UXMetrics, CoordinatorLog, JourneySpec, CoordinatorContext } from '../types'
 
@@ -13,13 +13,13 @@ export class AgentCoordinator {
   }
 
   private domAnalyzer: DOMAnalyzerAgent
-  private strategyPlanner: StrategyPlannerAgent
+  private actionPlanner: ActionPlannerAgent
   private actionExecutor: ActionExecutorAgent
 
   constructor(journeySpec: JourneySpec) {
     this.coordinatorContext = { journeySpec, intentExecutions: [] }
     this.domAnalyzer = new DOMAnalyzerAgent()
-    this.strategyPlanner = new StrategyPlannerAgent()
+    this.actionPlanner = new ActionPlannerAgent()
     this.actionExecutor = new ActionExecutorAgent()
   }
 
@@ -37,10 +37,16 @@ export class AgentCoordinator {
   }
 
   private async mockInit() {
-    // await Promise.all([this.domAnalyzer.init(), this.strategyPlanner.init(), this.actionExecutor.init()])
-    const userGoals = this.coordinatorContext.journeySpec.userSimulation.goals
-    this.coordinatorContext.intentExecutions = userGoals.map((goal) => ({
-      intent: goal,
+    // await Promise.all([this.domAnalyzer.init(), this.actionPlanner.init(), this.actionExecutor.init()])
+    const userIntents = [
+      'Logged in to WordPress Admin',
+      'Navigate to Coupons page',
+
+      'Open Create Coupon Form',
+      'Create first coupon',
+    ]
+    this.coordinatorContext.intentExecutions = userIntents.map((intent) => ({
+      intent,
       actionPlan: undefined,
       state: 'planning',
       currentStep: 0,
@@ -60,18 +66,17 @@ export class AgentCoordinator {
   }
 
   private async mockPlanNextAction() {
-    // if some action is done
     const domAnalysis = await this.mockAnalyzeDom()
 
     // come up with a plan
-    // this.coordinatorContext.intentExecutions = await this.strategyPlanner.planNextAction(
+    // this.coordinatorContext.intentExecutions = await this.actionPlanner.planNextAction(
     // this.coordinatorContext.intentExecutions, domAnalysis)
   }
 
   private async mockExecuteAction() {
     // Execute one action step.
     // Heuristically check if the action is successful.
-    // For example, it take too long, or too many error logs
+    // For example, check the plan success selector, if it take too long, too many error logs
 
     return 0.8
   }
