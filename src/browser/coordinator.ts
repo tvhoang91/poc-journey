@@ -18,32 +18,31 @@ export class AgentCoordinator {
 
   constructor(journeySpec: JourneySpec) {
     this.coordinatorContext = { journeySpec, intentExecutions: [] }
-    this.domAnalyzer = new DOMAnalyzerAgent()
-    this.actionPlanner = new ActionPlannerAgent()
-    this.actionExecutor = new ActionExecutorAgent()
+    this.domAnalyzer = new DOMAnalyzerAgent(journeySpec)
+    this.actionPlanner = new ActionPlannerAgent(journeySpec)
+    this.actionExecutor = new ActionExecutorAgent(journeySpec)
   }
 
   async run() {
-    await this.mockInit()
+    await this.init()
     let loopCount = 0
 
     do {
       loopCount++
       // Come up with a plan and execute it repeatedly until journey is completed or max plan loop is reached
-      await this.mockPlanAndExecute()
+      await this.planAndExecute()
     } while (loopCount < MAX_PLAN_LOOP && !this.isJourneyCompleted())
 
     return this.logs
   }
 
-  private async mockInit() {
-    // await Promise.all([this.domAnalyzer.init(), this.actionPlanner.init(), this.actionExecutor.init()])
+  private async init() {
+    await Promise.all([this.domAnalyzer.init(), this.actionPlanner.init(), this.actionExecutor.init()])
     const userIntents = [
       'Logged in to WordPress Admin',
       'Navigate to Coupons page',
-
-      'Open Create Coupon Form',
-      'Create first coupon',
+      // 'Open Create Coupon Form',
+      // 'Create first coupon',
     ]
     this.coordinatorContext.intentExecutions = userIntents.map((intent) => ({
       intent,
@@ -55,25 +54,25 @@ export class AgentCoordinator {
     this.log('Coordinator: Initializing agents DONE')
   }
 
-  private async mockPlanAndExecute() {
+  private async planAndExecute() {
     await this.mockPlanNextAction()
 
     let executedActionConfidence = 0
     do {
       // Execute action until plan is completed or something is not working, then stop to come up with a new plan
-      executedActionConfidence = await this.mockExecuteAction()
+      executedActionConfidence = await this.executeAction()
     } while (!this.isPlanCompleted() && executedActionConfidence > 0.5)
   }
 
   private async mockPlanNextAction() {
-    const domAnalysis = await this.mockAnalyzeDom()
+    await this.mockAnalyzeDom()
 
-    // come up with a plan
-    // this.coordinatorContext.intentExecutions = await this.actionPlanner.planNextAction(
-    // this.coordinatorContext.intentExecutions, domAnalysis)
+    this.coordinatorContext.intentExecutions = await this.actionPlanner.planNextAction(
+      this.coordinatorContext.intentExecutions,
+    )
   }
 
-  private async mockExecuteAction() {
+  private async executeAction() {
     // Execute one action step.
     // Heuristically check if the action is successful.
     // For example, check the plan success selector, if it take too long, too many error logs
@@ -89,11 +88,25 @@ export class AgentCoordinator {
   }
 
   private isJourneyCompleted() {
-    // journey complete after all plan executed
-    return true
+    return this.coordinatorContext.intentExecutions.every((execution) => execution.state === 'completed')
   }
   private isPlanCompleted() {
-    // plan complete then need to analyze the DOM and come up with a next plan
+    for (const execution of this.coordinatorContext.intentExecutions) {
+      if (execution.state === 'completed') {
+        continue // check next intent
+      } else if (execution.state === 'planning') {
+        return true
+      } else if (execution.state === 'failed') {
+        return true
+      } else if (execution.state === 'executing') {
+        const planedSteps = execution.actionPlan?.steps.length ?? 0
+        const executedSteps = execution.currentStep
+
+        return planedSteps === executedSteps
+      }
+    }
+
+    // journey is completed if all intents are completed
     return true
   }
 
