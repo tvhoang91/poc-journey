@@ -2,19 +2,14 @@
   "name": "poc-journey",
   "version": "1.0.0",
   "description": "UX Journey Simulation & Analysis POC",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "lint": "tsc --noEmit",
+    "start": "ts-node src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test:parser": "ts-node src/test-parser.ts",
-    "test:simulator": "ts-node src/test-simulator.ts",
-    "test:analyzer": "ts-node src/test-analyzer.ts",
-    "debug:parser": "nodemon --exec ts-node src/test-parser.ts",
-    "debug:simulator": "ts-node src/test-simulator.ts",
-    "debug:analyzer": "nodemon --exec ts-node src/test-analyzer.ts"
+    "debug:parser": "ts-node src/debug-parser.ts",
+    "debug:simulator": "ts-node src/debug-simulator.ts",
+    "debug:analyzer": "ts-node src/debug-analyzer.ts"
   },
   "keywords": [
     "ux",

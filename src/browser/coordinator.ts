@@ -1,7 +1,7 @@
 import { DOMAnalyzerAgent } from './agents/dom-analyzer'
 import { ActionPlannerAgent } from './agents/action-planner'
 import { ActionExecutorAgent } from './agents/action-executor'
-import { UXMetrics, CoordinatorLog, JourneySpec, CoordinatorContext } from '../types'
+import { UXMetrics, CoordinatorLog, JourneySpec, CoordinatorContext, Action, IntentExecution } from '../types'
 
 export class AgentCoordinator {
   private coordinatorContext: CoordinatorContext
@@ -70,14 +70,31 @@ export class AgentCoordinator {
     this.coordinatorContext.intentExecutions = await this.actionPlanner.planNextAction(
       this.coordinatorContext.intentExecutions,
     )
+    this.log('Coordinator: Planning next action DONE')
   }
 
   private async executeAction() {
-    // Execute one action step.
-    // Heuristically check if the action is successful.
-    // For example, check the plan success selector, if it take too long, too many error logs
+    let currentAction: Action | undefined
+    let currentIntent: IntentExecution | undefined
+    for (const execution of this.coordinatorContext.intentExecutions) {
+      if (execution.state === 'executing') {
+        currentAction = execution.actionPlan?.steps[execution.currentStep]
+        currentIntent = execution
+        break
+      }
+    }
 
-    return 0.8
+    const executedActionConfidence = await this.actionExecutor.executeAction(currentAction!)
+
+    if (currentIntent) {
+      if (currentIntent.currentStep + 1 >= (currentIntent.actionPlan?.steps.length ?? 0)) {
+        currentIntent.state = 'completed'
+      } else {
+        currentIntent!.currentStep++
+      }
+    }
+
+    return executedActionConfidence
   }
 
   private async mockAnalyzeDom() {
@@ -111,11 +128,18 @@ export class AgentCoordinator {
   }
 
   log(message: string) {
+    console.log(message)
     this.logs.push({
       type: 'info',
       message,
       timestamp: new Date(),
     })
+  }
+
+  async destroy() {
+    // this.domAnalyzer.destroy()
+    // this.actionPlanner.destroy()
+    this.actionExecutor.destroy()
   }
 }
 

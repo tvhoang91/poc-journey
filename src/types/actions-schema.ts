@@ -1,13 +1,13 @@
 import z from 'zod'
 
 export const locatorSchema = z.object({
-  getBy: z.enum(['role', 'label', 'text']),
+  getBy: z.enum(['role', 'label', 'text', 'css']),
   selector: z.string(),
   name: z.string().optional(),
 })
 
 export const actionSchema = z.object({
-  action: z.enum(['navigate', 'click', 'fill', 'check']),
+  action: z.enum(['navigate', 'click', 'fill', 'check', 'uncheck']),
   targetLocator: locatorSchema.optional(),
   value: z.string().optional(),
   waitForLocator: locatorSchema.optional(),

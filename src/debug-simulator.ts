@@ -3,9 +3,11 @@ import { JourneyParser } from './journey/parser'
 
 async function testSimulator() {
   console.log('🎭 Testing Browser Simulator')
+  let parser: JourneyParser | undefined
+  let coordinator: AgentCoordinator | undefined
 
   try {
-    const parser = new JourneyParser()
+    parser = new JourneyParser()
 
     console.log('🚀 Starting simulation with test journey:')
     const sampleJourney = await parser.parseJourneyFile('data/journeys/sample-journey.md')
@@ -14,7 +16,7 @@ async function testSimulator() {
     console.log('\n⏳ Running simulation...')
     const startTime = Date.now()
 
-    const coordinator = new AgentCoordinator(sampleJourney)
+    coordinator = new AgentCoordinator(sampleJourney)
     await coordinator.run()
     const metrics = coordinator.metrics
 
@@ -39,6 +41,16 @@ async function testSimulator() {
     if (error instanceof Error) {
       console.error('Error message:', error.message)
       console.error('Stack trace:', error.stack)
+    }
+
+    // wait for 5 minutes to debug
+    await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000))
+  } finally {
+    if (parser) {
+      await parser.destroy()
+    }
+    if (coordinator) {
+      await coordinator.destroy()
     }
   }
 }

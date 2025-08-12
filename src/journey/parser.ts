@@ -125,4 +125,8 @@ export class JourneyParser {
       userProfile.newTo.push(newToContent)
     }
   }
+
+  async destroy() {
+    // do nothing
+  }
 }

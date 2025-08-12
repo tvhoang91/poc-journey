@@ -17,7 +17,7 @@ export class ActionPlannerAgent {
 
       if (execution.intent === 'Logged in to WordPress Admin') {
         return LOGGIN_PLAN
-      } else if (execution.intent === 'Create a coupon') {
+      } else if (execution.intent === 'Navigate to Coupons page') {
         return COUPONS_PLAN
       }
 
@@ -35,13 +35,19 @@ const LOGGIN_PLAN: IntentExecution = {
       {
         action: 'navigate',
         value: 'https://wordpress.test/wp-admin',
+        waitForLocator: {
+          getBy: 'role',
+          selector: 'heading',
+          name: 'Log In',
+        },
         actionReasoning: 'Navigating to WordPress Admin',
       },
       {
         action: 'fill',
         targetLocator: {
-          getBy: 'label',
-          selector: 'username',
+          getBy: 'role',
+          selector: 'textbox',
+          name: 'Username',
         },
         value: 'admin',
         actionReasoning: 'Filling username',
@@ -49,8 +55,9 @@ const LOGGIN_PLAN: IntentExecution = {
       {
         action: 'fill',
         targetLocator: {
-          getBy: 'label',
-          selector: 'password',
+          getBy: 'role',
+          selector: 'textbox',
+          name: 'Password',
         },
         value: '1',
         actionReasoning: 'Filling password',
@@ -62,20 +69,50 @@ const LOGGIN_PLAN: IntentExecution = {
           selector: 'button',
           name: 'Log In',
         },
+        waitForLocator: {
+          getBy: 'role',
+          selector: 'link',
+          name: 'WooCommerce',
+        },
         actionReasoning: 'Clicking login button',
       },
     ],
-    planReasoning: 'Navigating to WordPress Admin. Enter username and password and click login',
+    planReasoning: 'Login to WordPress Admin. User see WooCommerce menu',
   },
   state: 'executing',
   currentStep: 0,
 }
 
 const COUPONS_PLAN: IntentExecution = {
-  intent: 'Create a coupon',
+  intent: 'Navigate to Coupons page',
   actionPlan: {
-    steps: [],
-    planReasoning: 'Navigating to Coupons page',
+    steps: [
+      {
+        action: 'navigate',
+        value: 'https://wordpress.test/wp-admin/edit.php?post_type=shop_coupon',
+        waitForLocator: {
+          getBy: 'css',
+          selector: 'h1.wp-heading-inline',
+          name: 'Coupons',
+        },
+        actionReasoning: 'Navigating to Coupons page',
+      },
+      {
+        action: 'click',
+        targetLocator: {
+          getBy: 'role',
+          selector: 'button',
+          name: 'Add new coupon',
+        },
+        waitForLocator: {
+          getBy: 'css',
+          selector: 'h1.wp-heading-inline',
+          name: 'Add Coupon',
+        },
+        actionReasoning: 'Clicking Add New button',
+      },
+    ],
+    planReasoning: 'Navigating to Coupons page. Checking New button',
   },
   state: 'executing',
   currentStep: 0,
